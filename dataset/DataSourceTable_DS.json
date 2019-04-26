@@ -1,0 +1,13 @@
+{
+	"name": "DataSourceTable_DS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "OnlineOrdersHostedInAzureSQL",
+			"type": "LinkedServiceReference"
+		},
+		"type": "AzureSqlTable",
+		"typeProperties": {
+			"tableName": "[dbo].[data_source_table]"
+		}
+	}
+}
