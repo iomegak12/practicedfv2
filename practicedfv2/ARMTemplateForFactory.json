@@ -33,6 +33,10 @@
 		},
 		"PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
 			"type": "secureString"
+		},
+		"iomegakvaccess_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://iomegakvv2.vault.azure.net/"
 		}
 	},
 	"variables": {
@@ -283,6 +287,19 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/integrationRuntimes/PracticeLiftNShiftISRuntime')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/iomegakvaccess')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('iomegakvaccess_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
 		}
 	]
 }

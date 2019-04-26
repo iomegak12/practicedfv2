@@ -34,6 +34,10 @@
 		"PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
 			"type": "secureString"
 		},
+		"iomegakvaccess_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://iomegakvv2.vault.azure.net/"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -75,6 +79,9 @@
 					},
 					"PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
 						"value": "[parameters('PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword')]"
+					},
+					"iomegakvaccess_properties_typeProperties_baseUrl": {
+						"value": "[parameters('iomegakvaccess_properties_typeProperties_baseUrl')]"
 					},
 					"ProcessedOrdersBlobStorage_DS_properties_typeProperties_fileName": {
 						"value": "[parameters('ProcessedOrdersBlobStorage_DS_properties_typeProperties_fileName')]"

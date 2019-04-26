@@ -25,6 +25,9 @@
 		},
 		"PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
 			"value": ""
+		},
+		"iomegakvaccess_properties_typeProperties_baseUrl": {
+			"value": "https://iomegakvv2.vault.azure.net/"
 		}
 	}
 }
