@@ -17,12 +17,6 @@
 		"ChangedRecordsBlobLS_connectionString": {
 			"value": ""
 		},
-		"ProcessedOrdersBlobStorage_DS_properties_typeProperties_fileName": {
-			"value": "@concat(guid(), '-', pipeline().RunId, '.txt')"
-		},
-		"ProcessedOrdersBlobStorage_DS_properties_typeProperties_folderPath": {
-			"value": "db-data"
-		},
 		"iomegakvaccess_properties_typeProperties_baseUrl": {
 			"value": "https://iomegakvv2.vault.azure.net/"
 		},
@@ -49,18 +43,6 @@
 		},
 		"ProcessedOrdersDLSConnection_properties_typeProperties_resourceGroupName": {
 			"value": "onpremisesdataintegration-rg"
-		},
-		"ProcessedOrdersDLS_DS_properties_typeProperties_fileName": {
-			"value": "@concat(guid(), '-processed', '.txt')"
-		},
-		"ProcessedOrdersDLS_DS_properties_typeProperties_folderPath": {
-			"value": "processed-files"
-		},
-		"ChangedRecordsToBlobDS_properties_typeProperties_fileName": {
-			"value": "@concat('changes-', guid(), '.txt')"
-		},
-		"ChangedRecordsToBlobDS_properties_typeProperties_folderPath": {
-			"value": "processed-results"
 		},
 		"containerUri": {
 			"value": ""

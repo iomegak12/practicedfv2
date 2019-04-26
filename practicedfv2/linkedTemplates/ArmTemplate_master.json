@@ -23,14 +23,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ChangedRecordsBlobLS'"
 		},
-		"ProcessedOrdersBlobStorage_DS_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": "@concat(guid(), '-', pipeline().RunId, '.txt')"
-		},
-		"ProcessedOrdersBlobStorage_DS_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "db-data"
-		},
 		"iomegakvaccess_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://iomegakvv2.vault.azure.net/"
@@ -65,22 +57,6 @@
 		"ProcessedOrdersDLSConnection_properties_typeProperties_resourceGroupName": {
 			"type": "string",
 			"defaultValue": "onpremisesdataintegration-rg"
-		},
-		"ProcessedOrdersDLS_DS_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": "@concat(guid(), '-processed', '.txt')"
-		},
-		"ProcessedOrdersDLS_DS_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "processed-files"
-		},
-		"ChangedRecordsToBlobDS_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": "@concat('changes-', guid(), '.txt')"
-		},
-		"ChangedRecordsToBlobDS_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "processed-results"
 		},
 		"containerUri": {
 			"type": "string",
@@ -133,12 +109,6 @@
 					"PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
 						"value": "[parameters('PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword')]"
 					},
-					"ProcessedOrdersBlobStorage_DS_properties_typeProperties_fileName": {
-						"value": "[parameters('ProcessedOrdersBlobStorage_DS_properties_typeProperties_fileName')]"
-					},
-					"ProcessedOrdersBlobStorage_DS_properties_typeProperties_folderPath": {
-						"value": "[parameters('ProcessedOrdersBlobStorage_DS_properties_typeProperties_folderPath')]"
-					},
 					"ProcessedOrdersDLSConnection_properties_typeProperties_dataLakeStoreUri": {
 						"value": "[parameters('ProcessedOrdersDLSConnection_properties_typeProperties_dataLakeStoreUri')]"
 					},
@@ -153,18 +123,6 @@
 					},
 					"ProcessedOrdersDLSConnection_properties_typeProperties_resourceGroupName": {
 						"value": "[parameters('ProcessedOrdersDLSConnection_properties_typeProperties_resourceGroupName')]"
-					},
-					"ChangedRecordsToBlobDS_properties_typeProperties_fileName": {
-						"value": "[parameters('ChangedRecordsToBlobDS_properties_typeProperties_fileName')]"
-					},
-					"ChangedRecordsToBlobDS_properties_typeProperties_folderPath": {
-						"value": "[parameters('ChangedRecordsToBlobDS_properties_typeProperties_folderPath')]"
-					},
-					"ProcessedOrdersDLS_DS_properties_typeProperties_fileName": {
-						"value": "[parameters('ProcessedOrdersDLS_DS_properties_typeProperties_fileName')]"
-					},
-					"ProcessedOrdersDLS_DS_properties_typeProperties_folderPath": {
-						"value": "[parameters('ProcessedOrdersDLS_DS_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
