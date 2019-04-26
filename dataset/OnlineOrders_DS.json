@@ -1,0 +1,44 @@
+{
+	"name": "OnlineOrders_DS",
+	"properties": {
+		"description": "Online Orders Data Set",
+		"linkedServiceName": {
+			"referenceName": "OnPremisesSQLServer",
+			"type": "LinkedServiceReference"
+		},
+		"type": "SqlServerTable",
+		"structure": [
+			{
+				"name": "orderId",
+				"type": "Int32"
+			},
+			{
+				"name": "orderDate",
+				"type": "Date"
+			},
+			{
+				"name": "customerId",
+				"type": "Int32"
+			},
+			{
+				"name": "billingAddress",
+				"type": "String"
+			},
+			{
+				"name": "totalUnits",
+				"type": "Int32"
+			},
+			{
+				"name": "orderAmount",
+				"type": "Int32"
+			},
+			{
+				"name": "remarks",
+				"type": "String"
+			}
+		],
+		"typeProperties": {
+			"tableName": "[dbo].[InternetOrders]"
+		}
+	}
+}
