@@ -1,0 +1,13 @@
+{
+	"name": "WatermarkDS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "OnlineOrdersHostedInAzureSQL",
+			"type": "LinkedServiceReference"
+		},
+		"type": "AzureSqlTable",
+		"typeProperties": {
+			"tableName": "[dbo].[watermarktable]"
+		}
+	}
+}
