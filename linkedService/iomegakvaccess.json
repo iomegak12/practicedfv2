@@ -1,0 +1,9 @@
+{
+	"name": "iomegakvaccess",
+	"properties": {
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://iomegakvv2.vault.azure.net/"
+		}
+	}
+}
