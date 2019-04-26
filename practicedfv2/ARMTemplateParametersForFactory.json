@@ -16,6 +16,15 @@
 		},
 		"ProcessedOrdersBlobStorage_DS_properties_typeProperties_folderPath": {
 			"value": "db-data"
+		},
+		"PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
+			"value": "iomegasqlserverv2.database.windows.net"
+		},
+		"PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
+			"value": "iomegaadmin"
+		},
+		"PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
+			"value": ""
 		}
 	}
 }

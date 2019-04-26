@@ -15,6 +15,17 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'OnPremisesSQLServer'"
 		},
+		"PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
+			"type": "string",
+			"defaultValue": "iomegasqlserverv2.database.windows.net"
+		},
+		"PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
+			"type": "string",
+			"defaultValue": "iomegaadmin"
+		},
+		"PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
+			"type": "secureString"
+		},
 		"ProcessedOrdersBlobStorage_DS_properties_typeProperties_fileName": {
 			"type": "string",
 			"defaultValue": "@concat(guid(), '-', pipeline().RunId, '.txt')"
@@ -49,6 +60,36 @@
 				"type": "SelfHosted",
 				"description": "OnPremises Hosted IS Runtime",
 				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PracticeLiftNShiftISRuntime')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "Central US",
+						"nodeSize": "Standard_D4_v3",
+						"numberOfNodes": 1,
+						"maxParallelExecutionsPerNode": 1
+					},
+					"ssisProperties": {
+						"catalogInfo": {
+							"catalogServerEndpoint": "[parameters('PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint')]",
+							"catalogAdminUserName": "[parameters('PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName')]",
+							"catalogAdminPassword": {
+								"type": "SecureString",
+								"value": "[parameters('PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword')]"
+							},
+							"catalogPricingTier": "S1"
+						},
+						"edition": "Standard",
+						"licenseType": "LicenseIncluded"
+					}
+				}
 			},
 			"dependsOn": []
 		},
@@ -102,6 +143,45 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/integrationRuntimes/onpremises-isruntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ExecuteLnSSSISPackage')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Execute_LnS_SSISPackage",
+						"type": "ExecuteSSISPackage",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"packageLocation": {
+								"packagePath": "Practice SSIS Packages/LiftAndShiftSSISProject/OnlineOrderProcessor.dtsx"
+							},
+							"loggingLevel": "Verbose",
+							"environmentPath": null,
+							"connectVia": {
+								"referenceName": "PracticeLiftNShiftISRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"projectConnectionManagers": {},
+							"packageConnectionManagers": {}
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/PracticeLiftNShiftISRuntime')]"
 			]
 		},
 		{

@@ -23,6 +23,17 @@
 			"type": "string",
 			"defaultValue": "db-data"
 		},
+		"PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
+			"type": "string",
+			"defaultValue": "iomegasqlserverv2.database.windows.net"
+		},
+		"PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
+			"type": "string",
+			"defaultValue": "iomegaadmin"
+		},
+		"PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
+			"type": "secureString"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -55,6 +66,15 @@
 					},
 					"OnPremisesSQLServer_connectionString": {
 						"value": "[parameters('OnPremisesSQLServer_connectionString')]"
+					},
+					"PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
+						"value": "[parameters('PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint')]"
+					},
+					"PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
+						"value": "[parameters('PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName')]"
+					},
+					"PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
+						"value": "[parameters('PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword')]"
 					},
 					"ProcessedOrdersBlobStorage_DS_properties_typeProperties_fileName": {
 						"value": "[parameters('ProcessedOrdersBlobStorage_DS_properties_typeProperties_fileName')]"
