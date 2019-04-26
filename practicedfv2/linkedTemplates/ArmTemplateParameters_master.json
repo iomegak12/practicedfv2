@@ -8,6 +8,9 @@
 		"OnPremisesSQLServer_connectionString": {
 			"value": ""
 		},
+		"OnlineOrdersHostedInAzureSQL_connectionString": {
+			"value": ""
+		},
 		"ProcessedOrdersBlobStorage_connectionString": {
 			"value": ""
 		},
@@ -16,6 +19,9 @@
 		},
 		"ProcessedOrdersBlobStorage_DS_properties_typeProperties_folderPath": {
 			"value": "db-data"
+		},
+		"iomegakvaccess_properties_typeProperties_baseUrl": {
+			"value": "https://iomegakvv2.vault.azure.net/"
 		},
 		"PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
 			"value": "iomegasqlserverv2.database.windows.net"
@@ -26,8 +32,26 @@
 		"PracticeLiftNShiftISRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
 			"value": ""
 		},
-		"iomegakvaccess_properties_typeProperties_baseUrl": {
-			"value": "https://iomegakvv2.vault.azure.net/"
+		"ProcessedOrdersDLSConnection_properties_typeProperties_dataLakeStoreUri": {
+			"value": "https://iomegadlsv1.azuredatalakestore.net/webhdfs/v1"
+		},
+		"ProcessedOrdersDLSConnection_properties_typeProperties_servicePrincipalId": {
+			"value": "4499f09c-741e-4057-ad20-e40d33ccd1d0"
+		},
+		"ProcessedOrdersDLSConnection_properties_typeProperties_tenant": {
+			"value": "381a10df-8e85-43db-86e1-8893b075b027"
+		},
+		"ProcessedOrdersDLSConnection_properties_typeProperties_subscriptionId": {
+			"value": "7293f3cb-5705-4319-a0cc-15472af46eed"
+		},
+		"ProcessedOrdersDLSConnection_properties_typeProperties_resourceGroupName": {
+			"value": "onpremisesdataintegration-rg"
+		},
+		"ProcessedOrdersDLS_DS_properties_typeProperties_fileName": {
+			"value": "@concat(guid(), '-processed', '.txt')"
+		},
+		"ProcessedOrdersDLS_DS_properties_typeProperties_folderPath": {
+			"value": "processed-files"
 		},
 		"containerUri": {
 			"value": ""

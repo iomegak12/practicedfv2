@@ -1,0 +1,193 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory Name",
+			"defaultValue": "practicedfv2"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/ProcessedOrdersDLSConnection')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "AzureDataLakeStore",
+				"typeProperties": {
+					"dataLakeStoreUri": "https://iomegadlsv1.azuredatalakestore.net/webhdfs/v1",
+					"servicePrincipalId": "4499f09c-741e-4057-ad20-e40d33ccd1d0",
+					"servicePrincipalKey": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "iomegakvaccess",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "adfv2appsecretkey"
+					},
+					"tenant": "381a10df-8e85-43db-86e1-8893b075b027",
+					"subscriptionId": "7293f3cb-5705-4319-a0cc-15472af46eed",
+					"resourceGroupName": "onpremisesdataintegration-rg"
+				}
+			}
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OnlineOrdersSQL_DS')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "OnlineOrdersHostedInAzureSQL",
+					"type": "LinkedServiceReference"
+				},
+				"type": "AzureSqlTable",
+				"structure": [
+					{
+						"name": "orderId",
+						"type": "Int32"
+					},
+					{
+						"name": "orderDate",
+						"type": "Date"
+					},
+					{
+						"name": "customerId",
+						"type": "Int32"
+					},
+					{
+						"name": "billingAddress",
+						"type": "String"
+					},
+					{
+						"name": "totalUnits",
+						"type": "Int32"
+					},
+					{
+						"name": "orderAmount",
+						"type": "Int32"
+					},
+					{
+						"name": "remarks",
+						"type": "String"
+					}
+				],
+				"typeProperties": {
+					"tableName": "[concat('[', 'dbo].[InternetOrders]')]"
+				}
+			}
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ProcessedOrdersDLS_DS')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ProcessedOrdersDLSConnection",
+					"type": "LinkedServiceReference"
+				},
+				"type": "AzureDataLakeStoreFile",
+				"typeProperties": {
+					"format": {
+						"type": "TextFormat",
+						"columnDelimiter": ",",
+						"rowDelimiter": "",
+						"nullValue": "\\N",
+						"treatEmptyAsNull": true,
+						"skipLineCount": 0,
+						"firstRowAsHeader": false
+					},
+					"fileName": {
+						"value": "@concat(guid(), '-processed', '.txt')",
+						"type": "Expression"
+					},
+					"folderPath": "processed-files"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ProcessedOrdersDLSConnection')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyDataFromSQLToDLS",
+						"type": "Copy",
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource"
+							},
+							"sink": {
+								"type": "AzureDataLakeStoreSink"
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "OnlineOrdersSQL_DS",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ProcessedOrdersDLS_DS",
+								"type": "DatasetReference"
+							}
+						]
+					},
+					{
+						"name": "CallLogicAppsToSendEmail",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "CopyDataFromSQLToDLS",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"typeProperties": {
+							"url": "https://prod-03.centralus.logic.azure.com:443/workflows/186dbba44e1d4a2fb3fd2a1fa1d424d0/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=4xq-O-1C1-CqklTSZcpwLmGU7WxTbOtwC07EaEUPUk8",
+							"method": "POST",
+							"headers": {
+								"Content-Type": "application/json",
+								"Accept": "application/json"
+							},
+							"body": {
+								"EmailTo": "jd.ramkumar@gmail.com",
+								"Subject": "Simple Message",
+								"Body": "This is a simple and sample message body",
+								"IsHtml": false
+							}
+						}
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/OnlineOrdersSQL_DS')]",
+				"[concat(variables('factoryId'), '/datasets/ProcessedOrdersDLS_DS')]"
+			]
+		}
+	]
+}
