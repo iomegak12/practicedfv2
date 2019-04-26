@@ -1,0 +1,43 @@
+{
+	"name": "OnlineOrdersSQL_DS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "OnlineOrdersHostedInAzureSQL",
+			"type": "LinkedServiceReference"
+		},
+		"type": "AzureSqlTable",
+		"structure": [
+			{
+				"name": "orderId",
+				"type": "Int32"
+			},
+			{
+				"name": "orderDate",
+				"type": "Date"
+			},
+			{
+				"name": "customerId",
+				"type": "Int32"
+			},
+			{
+				"name": "billingAddress",
+				"type": "String"
+			},
+			{
+				"name": "totalUnits",
+				"type": "Int32"
+			},
+			{
+				"name": "orderAmount",
+				"type": "Int32"
+			},
+			{
+				"name": "remarks",
+				"type": "String"
+			}
+		],
+		"typeProperties": {
+			"tableName": "[dbo].[InternetOrders]"
+		}
+	}
+}
