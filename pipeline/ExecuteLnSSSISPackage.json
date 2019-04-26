@@ -1,0 +1,29 @@
+{
+	"name": "ExecuteLnSSSISPackage",
+	"properties": {
+		"activities": [
+			{
+				"name": "Execute_LnS_SSISPackage",
+				"type": "ExecuteSSISPackage",
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"packageLocation": {
+						"packagePath": "Practice SSIS Packages/LiftAndShiftSSISProject/OnlineOrderProcessor.dtsx"
+					},
+					"loggingLevel": "Verbose",
+					"environmentPath": null,
+					"connectVia": {
+						"referenceName": "PracticeLiftNShiftISRuntime",
+						"type": "IntegrationRuntimeReference"
+					}
+				}
+			}
+		]
+	}
+}
