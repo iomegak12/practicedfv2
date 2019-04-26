@@ -1,0 +1,221 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory Name",
+			"defaultValue": "practicedfv2"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/DataSourceTable_DS')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "OnlineOrdersHostedInAzureSQL",
+					"type": "LinkedServiceReference"
+				},
+				"type": "AzureSqlTable",
+				"typeProperties": {
+					"tableName": "[concat('[', 'dbo].[data_source_table]')]"
+				}
+			}
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/WatermarkDS')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "OnlineOrdersHostedInAzureSQL",
+					"type": "LinkedServiceReference"
+				},
+				"type": "AzureSqlTable",
+				"typeProperties": {
+					"tableName": "[concat('[', 'dbo].[watermarktable]')]"
+				}
+			}
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LookupOldWatermarkActivity",
+						"type": "Lookup",
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource"
+							},
+							"dataset": {
+								"referenceName": "WatermarkDS",
+								"type": "DatasetReference"
+							}
+						}
+					},
+					{
+						"name": "LookupNewWatermarkActivity",
+						"type": "Lookup",
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource",
+								"sqlReaderQuery": "select MAX(LastModifytime) as NewWatermarkvalue from data_source_table"
+							},
+							"dataset": {
+								"referenceName": "DataSourceTable_DS",
+								"type": "DatasetReference"
+							}
+						}
+					},
+					{
+						"name": "MoveTheContentsToBlobStorage",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "LookupOldWatermarkActivity",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "LookupNewWatermarkActivity",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource",
+								"sqlReaderQuery": {
+									"value": "select * from data_source_table where LastModifytime > '@{activity('LookupOldWatermarkActivity').output.firstRow.WatermarkValue}' and LastModifytime <= '@{activity('LookupNewWatermarkActivity').output.firstRow.NewWatermarkvalue}'",
+									"type": "Expression"
+								}
+							},
+							"sink": {
+								"type": "BlobSink"
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "DataSourceTable_DS",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ChangedRecordsToBlobDS",
+								"type": "DatasetReference"
+							}
+						]
+					},
+					{
+						"name": "Stored Procedure1",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "MoveTheContentsToBlobStorage",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"typeProperties": {
+							"storedProcedureName": "[concat('[', 'dbo].[usp_write_watermark]')]",
+							"storedProcedureParameters": {
+								"LastModifiedtime": {
+									"value": {
+										"value": "@{activity('LookupNewWatermarkActivity').output.firstRow.NewWatermarkvalue}",
+										"type": "Expression"
+									},
+									"type": "DateTime"
+								},
+								"TableName": {
+									"value": {
+										"value": "@{activity('LookupOldWatermarkActivity').output.firstRow.TableName}",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "OnlineOrdersHostedInAzureSQL",
+							"type": "LinkedServiceReference"
+						}
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/WatermarkDS')]",
+				"[concat(variables('factoryId'), '/datasets/DataSourceTable_DS')]",
+				"[concat(variables('factoryId'), '/datasets/ChangedRecordsToBlobDS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ChangedRecordsToBlobDS')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ChangedRecordsBlobLS",
+					"type": "LinkedServiceReference"
+				},
+				"type": "AzureBlob",
+				"typeProperties": {
+					"format": {
+						"type": "TextFormat",
+						"columnDelimiter": ",",
+						"rowDelimiter": "",
+						"nullValue": "\\N",
+						"treatEmptyAsNull": true,
+						"skipLineCount": 0,
+						"firstRowAsHeader": false
+					},
+					"fileName": {
+						"value": "@concat('changes-', guid(), '.txt')",
+						"type": "Expression"
+					},
+					"folderPath": "processed-results"
+				}
+			}
+		}
+	]
+}

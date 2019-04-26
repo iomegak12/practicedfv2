@@ -19,6 +19,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ProcessedOrdersBlobStorage'"
 		},
+		"ChangedRecordsBlobLS_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ChangedRecordsBlobLS'"
+		},
 		"ProcessedOrdersBlobStorage_DS_properties_typeProperties_fileName": {
 			"type": "string",
 			"defaultValue": "@concat(guid(), '-', pipeline().RunId, '.txt')"
@@ -70,6 +74,14 @@
 			"type": "string",
 			"defaultValue": "processed-files"
 		},
+		"ChangedRecordsToBlobDS_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@concat('changes-', guid(), '.txt')"
+		},
+		"ChangedRecordsToBlobDS_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "processed-results"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -99,6 +111,9 @@
 					},
 					"ProcessedOrdersBlobStorage_connectionString": {
 						"value": "[parameters('ProcessedOrdersBlobStorage_connectionString')]"
+					},
+					"ChangedRecordsBlobLS_connectionString": {
+						"value": "[parameters('ChangedRecordsBlobLS_connectionString')]"
 					},
 					"OnPremisesSQLServer_connectionString": {
 						"value": "[parameters('OnPremisesSQLServer_connectionString')]"
@@ -138,6 +153,12 @@
 					},
 					"ProcessedOrdersDLSConnection_properties_typeProperties_resourceGroupName": {
 						"value": "[parameters('ProcessedOrdersDLSConnection_properties_typeProperties_resourceGroupName')]"
+					},
+					"ChangedRecordsToBlobDS_properties_typeProperties_fileName": {
+						"value": "[parameters('ChangedRecordsToBlobDS_properties_typeProperties_fileName')]"
+					},
+					"ChangedRecordsToBlobDS_properties_typeProperties_folderPath": {
+						"value": "[parameters('ChangedRecordsToBlobDS_properties_typeProperties_folderPath')]"
 					},
 					"ProcessedOrdersDLS_DS_properties_typeProperties_fileName": {
 						"value": "[parameters('ProcessedOrdersDLS_DS_properties_typeProperties_fileName')]"
