@@ -1,0 +1,26 @@
+{
+	"name": "ProcessedOrdersBlobStorage_DS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ProcessedOrdersBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"type": "AzureBlob",
+		"typeProperties": {
+			"format": {
+				"type": "TextFormat",
+				"columnDelimiter": ",",
+				"rowDelimiter": "",
+				"nullValue": "\\N",
+				"treatEmptyAsNull": true,
+				"skipLineCount": 0,
+				"firstRowAsHeader": false
+			},
+			"fileName": {
+				"value": "concat(guid(), \"-\", @pipeline().RunId, \".txt\")",
+				"type": "Expression"
+			},
+			"folderPath": "db-data"
+		}
+	}
+}
