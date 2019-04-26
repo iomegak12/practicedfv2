@@ -1,7 +1,0 @@
-{
-	"name": "onpremises-isruntime",
-	"properties": {
-		"type": "SelfHosted",
-		"description": "OnPremises Hosted IS Runtime"
-	}
-}
