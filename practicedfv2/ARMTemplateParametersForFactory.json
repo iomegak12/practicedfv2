@@ -12,7 +12,7 @@
 			"value": ""
 		},
 		"ProcessedOrdersBlobStorage_DS_properties_typeProperties_fileName": {
-			"value": "concat(guid(), \"-\", @pipeline().RunId, \".txt\")"
+			"value": "@concat(guid(), '-', pipeline().RunId, '.txt')"
 		},
 		"ProcessedOrdersBlobStorage_DS_properties_typeProperties_folderPath": {
 			"value": "db-data"

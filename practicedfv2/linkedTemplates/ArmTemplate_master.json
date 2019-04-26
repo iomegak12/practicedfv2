@@ -17,7 +17,7 @@
 		},
 		"ProcessedOrdersBlobStorage_DS_properties_typeProperties_fileName": {
 			"type": "string",
-			"defaultValue": "concat(guid(), \"-\", @pipeline().RunId, \".txt\")"
+			"defaultValue": "@concat(guid(), '-', pipeline().RunId, '.txt')"
 		},
 		"ProcessedOrdersBlobStorage_DS_properties_typeProperties_folderPath": {
 			"type": "string",
