@@ -1,0 +1,208 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory Name",
+			"defaultValue": "practicedfv2"
+		},
+		"OnPremisesSQLServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'OnPremisesSQLServer'"
+		},
+		"ProcessedOrdersBlobStorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ProcessedOrdersBlobStorage'"
+		},
+		"ProcessedOrdersBlobStorage_DS_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "concat(guid(), \"-\", @pipeline().RunId, \".txt\")"
+		},
+		"ProcessedOrdersBlobStorage_DS_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "db-data"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/onpremises-isruntime')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"description": "OnPremises Hosted IS Runtime",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OnPremisesSQLServer')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "OnPremises SQL Server",
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('OnPremisesSQLServer_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "onpremises-isruntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/onpremises-isruntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OnlineOrders_DS')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Online Orders Data Set",
+				"linkedServiceName": {
+					"referenceName": "OnPremisesSQLServer",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"structure": [
+					{
+						"name": "orderId",
+						"type": "Int32"
+					},
+					{
+						"name": "orderDate",
+						"type": "Date"
+					},
+					{
+						"name": "customerId",
+						"type": "Int32"
+					},
+					{
+						"name": "billingAddress",
+						"type": "String"
+					},
+					{
+						"name": "totalUnits",
+						"type": "Int32"
+					},
+					{
+						"name": "orderAmount",
+						"type": "Int32"
+					},
+					{
+						"name": "remarks",
+						"type": "String"
+					}
+				],
+				"typeProperties": {
+					"tableName": "[concat('[', 'dbo].[InternetOrders]')]"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/OnPremisesSQLServer')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OnPremisesOrdersProcessingPipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyOnlineOrdersToBlob",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource"
+							},
+							"sink": {
+								"type": "BlobSink"
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "OnlineOrders_DS",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ProcessedOrdersBlobStorage_DS",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/OnlineOrders_DS')]",
+				"[concat(variables('factoryId'), '/datasets/ProcessedOrdersBlobStorage_DS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ProcessedOrdersBlobStorage_DS')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ProcessedOrdersBlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureBlob",
+				"typeProperties": {
+					"format": {
+						"type": "TextFormat",
+						"columnDelimiter": ",",
+						"rowDelimiter": "",
+						"nullValue": "\\N",
+						"treatEmptyAsNull": true,
+						"skipLineCount": 0,
+						"firstRowAsHeader": false
+					},
+					"fileName": {
+						"value": "[parameters('ProcessedOrdersBlobStorage_DS_properties_typeProperties_fileName')]",
+						"type": "Expression"
+					},
+					"folderPath": "[parameters('ProcessedOrdersBlobStorage_DS_properties_typeProperties_folderPath')]"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ProcessedOrdersBlobStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ProcessedOrdersBlobStorage')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('ProcessedOrdersBlobStorage_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
