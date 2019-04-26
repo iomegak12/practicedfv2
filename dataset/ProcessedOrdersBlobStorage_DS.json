@@ -17,7 +17,7 @@
 				"firstRowAsHeader": false
 			},
 			"fileName": {
-				"value": "concat(guid(), \"-\", @pipeline().RunId, \".txt\")",
+				"value": "@concat(guid(), '-', pipeline().RunId, '.txt')",
 				"type": "Expression"
 			},
 			"folderPath": "db-data"
