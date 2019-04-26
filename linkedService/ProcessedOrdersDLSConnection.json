@@ -1,0 +1,21 @@
+{
+	"name": "ProcessedOrdersDLSConnection",
+	"properties": {
+		"type": "AzureDataLakeStore",
+		"typeProperties": {
+			"dataLakeStoreUri": "https://iomegadlsv1.azuredatalakestore.net/webhdfs/v1",
+			"servicePrincipalId": "4499f09c-741e-4057-ad20-e40d33ccd1d0",
+			"servicePrincipalKey": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "iomegakvaccess",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "adfv2appsecretkey"
+			},
+			"tenant": "381a10df-8e85-43db-86e1-8893b075b027",
+			"subscriptionId": "7293f3cb-5705-4319-a0cc-15472af46eed",
+			"resourceGroupName": "onpremisesdataintegration-rg"
+		}
+	}
+}
